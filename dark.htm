@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<style>
+canvas {
+    background-color: #0f0f0f;
+}
+</style>
+</head>
+<body onload="startGame()">
+
+
+
+<script>
+
+var myGamePiece = [];
+var dotCount = 60;
+var activationDistance = 250;
+var darkenAmount = 80;
+var maxWidth = 1.5;
+var dotSizeMin = 2;
+var dotSizeMax = 4;
+//var mouseX = 0;
+//var mouseY = 0;
+var gameWidth=document.documentElement.clientWidth;
+var gameHeight = document.documentElement.clientHeight;
+var ctx
+
+/*
+var mouseDown = 0;
+document.body.onmousedown = function() { 
+  ++mouseDown;
+};
+document.body.onmouseup = function() {
+  --mouseDown;
+};
+*/
+
+function startGame() {
+    myGameArea.start();
+	
+	for(i=0; i<dotCount; i++)
+	{
+		myGamePiece[i] = new component((Math.random()*(dotSizeMax-dotSizeMin))+dotSizeMin, "#777", (Math.random()*(gameWidth-100))+50, (Math.random()*(gameHeight-100))+50, (Math.random()*Math.PI*2), (Math.random()*2)-1);
+	}
+}
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = gameWidth;
+        this.canvas.height = gameHeight;
+		
+		this.canvas.width = gameWidth;
+        this.canvas.height = gameHeight;
+        this.canvas.style.left = "0px";
+        this.canvas.style.top = "0px";
+        this.canvas.style.position = "absolute";
+		
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+		this.interval = setInterval(updateGameArea, 20);
+    },
+	clear : function() {
+		this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+	}
+};
+
+function component(size, color, x, y, angle, spd) {
+    this.size = size;
+    this.x = x;
+    this.y = y;
+	this.angle = angle;
+    this.spd = spd;
+	this.mov = (Math.random()*0.02)-0.01;
+	
+    this.update = function(){
+		this.angle+=this.mov;
+		
+		this.x+=Math.cos(this.angle)*this.spd;
+		this.y+=Math.sin(this.angle)*this.spd;
+		
+		ctx = myGameArea.context;
+		
+		
+		for(k=0; k<myGamePiece.length; k++) {
+			if(myGamePiece[k]!=this)
+			{
+				if((Math.abs(myGamePiece[k].x-this.x)) + (Math.abs(myGamePiece[k].y-this.y)) < activationDistance)
+				{
+					var d = ((Math.abs(myGamePiece[k].x-this.x)) + (Math.abs(myGamePiece[k].y-this.y)));
+					
+					var normalised = d/activationDistance;
+					
+					var c = 15+((1-normalised)*darkenAmount);
+					
+					var cahla = "#"+fullColorHex(c,c,c);
+					
+					ctx.beginPath();
+						ctx.lineCap = "round";
+						ctx.moveTo(this.x, this.y);
+						ctx.lineTo(myGamePiece[k].x, myGamePiece[k].y);
+						
+						ctx.strokeStyle = cahla;
+						ctx.lineWidth = maxWidth-(normalised*maxWidth);
+						ctx.stroke();
+					ctx.closePath();
+				}
+			}
+		}
+		
+		
+		ctx.beginPath();
+			ctx.fillStyle = color;
+			ctx.arc(this.x, this.y, this.size, 0, Math.PI*2);
+			ctx.fill();
+		ctx.closePath();
+	};
+}
+
+function updateGameArea() {
+	myGameArea.clear();
+	
+	/*
+	if(mouseDown)
+	{
+		var ctx = myGameArea.context;	
+		var pos = getMousePos(myGameArea.canvas);
+
+		for(o=0; o<myGamePiece.length; o++) {
+			var d = Math.log10(((Math.abs(myGamePiece[o].x-pos.x2) + (Math.abs(myGamePiece[o].y-pos.y)))+1)); //will range from 0 to 1
+			
+			var dx = pos.x - myGamePiece[o].x;
+			var dy = pos.y - myGamePiece[o].y;
+			var theta = Math.PI-Math.atan2(dy, dx); // range (-PI, PI]
+			
+			myGamePiece[o].angle = (theta*(1-d));
+		}
+	}
+	*/
+
+	for(i=0; i<myGamePiece.length; i++)
+	{
+		myGamePiece[i].update();
+	}
+}
+
+window.onerror = function(msg, url, linenumber) {
+    alert('Error message: '+msg+'\nURL: '+url+'\nLine Number: '+linenumber);
+    return true;
+};
+
+/*
+window.addEventListener("mousemove", (evt) => {
+	mouseX = evt.clientX;
+	mouseY = evt.clientY;
+});
+
+function getMousePos(canvas) {
+	var rect = canvas.getBoundingClientRect();
+		return {
+			x: mouseX - rect.left,
+			y: mouseY - rect.top
+		};
+	}
+	*/
+
+var rgbToHex = function (rgb) { 
+  var hex = Number(rgb).toString(16);
+  if (hex.length < 2) {
+       hex = "0" + hex;
+  }
+  return hex;
+};
+var fullColorHex = function(r,g,b) {   
+	var red = rgbToHex(Math.floor(r));
+	var green = rgbToHex(Math.floor(g));
+	var blue = rgbToHex(Math.floor(b));
+	return red+green+blue;
+};
+</script>
+
+</body>
+</html>
