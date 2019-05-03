@@ -36,7 +36,7 @@ namespace Rainpaper
 		{
 			InitializeComponent();
 			
-			string url = Prompt.ShowDialog("https://filebin.net/6iksluahwplvxto3/dark.htm?t=9viumexr", "Please enter the URL");
+			string url = Prompt.ShowDialog("https://58406979-c515-4181-b3ee-24546dba0f72.htmlpasta.com/", "Please enter the URL");
 			if(url=="-1") {
 				Environment.Exit(0);
 			}
@@ -88,7 +88,7 @@ namespace Rainpaper
 		
 		void ChooseNewClick(object sender, EventArgs e)
 		{
-			string url = Prompt.ShowDialog("https://filebin.net/6iksluahwplvxto3/dark.htm?t=9viumexr", "Please enter the URL");
+			string url = Prompt.ShowDialog("https://58406979-c515-4181-b3ee-24546dba0f72.htmlpasta.com/", "Please enter the URL");
 			if(url=="-1") {
 				Environment.Exit(0);
 			}
